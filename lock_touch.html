@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="js/jquery-1.8.3.min.js"></script>
+    <style>
+    *{
+        margin:0;
+        padding:0;
+    }
+    html,body{
+        height: 100%;
+    }
+
+    #canvas{
+        /*border:1px solid red;*/
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-50%);
+        -webkit-transform:translate(-50%,-50%);
+        background: rgb(37, 39, 54);
+    }
+
+    #canvas_hide{
+        position: absolute;
+        left:50%;
+        top:50%;
+        transform:translate(-50%,-50%);
+        -webkit-transform:translate(-50%,-50%);
+    }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="500" height="500" ></canvas>
+    <canvas id="canvas_hide" width="500" height="500" ></canvas>
+    <script>
+    var arr=[],temp=[],save=[];
+    var canvas=document.getElementById('canvas');
+    var canvas_hide=document.getElementById('canvas_hide');
+    var ctx=canvas.getContext('2d');
+    var ctx_hide=canvas_hide.getContext('2d');
+    ctx_hide.fillStyle="transparent";
+    ctx_hide.fillRect(0,0,500,500);
+    var l=$('#canvas').position().left;
+    var t=$('#canvas').position().top;
+    var win=
+    [
+    {x:100,y:100},
+    {x:250,y:100},
+    {x:400,y:100},
+    {x:250,y:250},
+    {x:100,y:400},
+    {x:250,y:400},
+    {x:400,y:400}
+    ];
+
+    function addEvent(obj,event,fn){
+        if(obj.attachEvent){
+            obj.attachEvent('on'+event,fn);
+        }else{
+            obj.addEventListener(event,fn);
+        }
+
+    }
+
+
+
+    function init(){
+        for(var i=0;i<=2;i++){
+            for(var j=0;j<=2;j++){
+                arr.push([100+(150*j),100+(150*i)]);
+                ctx.beginPath();
+                ctx.arc(100+(150*i),100+(150*j),50,0,2*Math.PI);
+                ctx.lineWidth=5;
+                ctx.strokeStyle="#fff";
+                ctx.stroke();
+                ctx.closePath();
+                ctx.beginPath();
+                ctx.arc(100+(150*i),100+(150*j),20,0,2*Math.PI);
+                ctx.fillStyle="transparent";
+                ctx.fill();
+                ctx.closePath();
+            }
+        }
+    }
+
+    init();
+    // console.log(arr);
+    function check(json){
+        for(var i=0;i<arr.length;i++){
+            var len=Math.sqrt(Math.pow(Math.abs(arr[i][0]-json.x),2)+Math.pow(Math.abs(arr[i][1]-json.y),2));
+            if(len<50 && temp.indexOf(i)==-1){
+                temp.push(i);
+                ctx.beginPath();
+                ctx.arc(arr[i][0],arr[i][1],20,0,2*Math.PI);
+                ctx.fillStyle="#fff";
+                ctx.fill();
+                ctx.closePath();
+                return {x:arr[i][0],y:arr[i][1]};
+            }
+        }
+    }
+
+    function line(color){
+
+        for(var i=0;i<save.length-1;i++){
+            ctx_hide.beginPath();
+            if(color){
+                ctx_hide.strokeStyle=color;
+            }
+            ctx_hide.moveTo(save[i].x,save[i].y);
+            ctx_hide.lineTo(save[i+1].x,save[i+1].y);
+            ctx_hide.stroke();
+            ctx_hide.closePath();
+         }
+    }
+
+
+
+    addEvent(canvas_hide,'touchstart',function(ent){
+
+        var e=ent||event;
+        if(e.changedTouches.length>1)  return;
+        var x1=e.changedTouches[0].clientX;
+        var y1=e.changedTouches[0].clientY;
+        var dis_x=x1-l;
+        var dis_y=y1-t;
+
+        var obj=check({
+            x:dis_x,
+            y:dis_y
+        });
+
+        ctx_hide.clearRect(0,0,500,500);
+
+        if(obj){
+           var res={
+                    x:obj.x,
+                    y:obj.y
+           };
+           save.push(res);
+        }
+
+        if(save.length>0){
+            var xx=save[save.length-1].x;
+            var yy=save[save.length-1].y;
+            ctx_hide.beginPath();
+            ctx_hide.strokeStyle="#fff";
+            ctx_hide.lineWidth=5;
+            ctx_hide.moveTo(xx,yy);
+            ctx_hide.lineTo(dis_x,dis_y);
+            ctx_hide.stroke();
+            ctx_hide.closePath();
+        }
+
+        
+    });
+
+    addEvent(canvas_hide,'touchmove',function(ent){
+            var e=ent||event;
+            if(e.changedTouches.length>1)  return;
+            var x2=e.changedTouches[0].clientX;
+            var y2=e.changedTouches[0].clientY;
+            // console.log(e);
+            var dis_x=x2-l;
+            var dis_y=y2-t;
+            // console.log(dis_x,dis_y);
+            obj=check({
+                x:dis_x,
+                y:dis_y
+            });
+
+            if(obj){
+                var res={
+                    x:obj.x,
+                    y:obj.y
+                };
+                save.push(res);
+            }
+            
+            ctx_hide.clearRect(0,0,500,500);
+
+
+            if(save.length>1){    
+                line();
+            }
+
+
+            if(save.length>0){
+                var xx=save[save.length-1].x;
+                var yy=save[save.length-1].y;
+                ctx_hide.beginPath();
+                ctx_hide.strokeStyle="#fff";
+                ctx_hide.lineWidth=5;
+                ctx_hide.moveTo(xx,yy);
+                ctx_hide.lineTo(dis_x,dis_y);
+                ctx_hide.stroke();
+                ctx_hide.closePath();
+            }
+        });
+
+        addEvent(canvas_hide,'touchend',function(){
+            this.onmousemove=null;
+            this.onmouseup=null;
+            var flag=true;
+
+            ctx_hide.clearRect(0,0,500,500);
+
+            
+
+            if(win.length==save.length){
+
+                for(var i = 0;i < win.length; i++){
+                    if(win[i].x!=save[i].x || win[i].y!=save[i].y){
+                        flag=false;
+                    }
+                }
+
+                if(flag){
+                    line('green');
+                    alert('解锁成功!!!你很聪明，像我');
+
+                    
+                }else{
+                    line('red');
+                    alert('解锁不成功!!!');
+                    
+                }
+
+            }else{
+                line('red');
+                alert('解锁不成功!!!');
+                
+            }
+
+
+            ctx.clearRect(0,0,500,500);
+            ctx_hide.clearRect(0,0,500,500);
+            save=[];
+            temp=[];
+            arr=[];
+            init();
+        });
+
+    </script>
+</body>
+</html>
