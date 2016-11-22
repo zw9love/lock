@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta charset="UTF-8">
     <title>Document</title>
     <script src="js/jquery-1.8.3.min.js"></script>
@@ -33,8 +34,8 @@
     </style>
 </head>
 <body>
-    <canvas id="canvas" width="500" height="500" ></canvas>
-    <canvas id="canvas_hide" width="500" height="500" ></canvas>
+    <canvas id="canvas" width="300" height="300" ></canvas>
+    <canvas id="canvas_hide" width="300" height="300" ></canvas>
     <script>
     var arr=[],temp=[],save=[];
     var canvas=document.getElementById('canvas');
@@ -42,18 +43,18 @@
     var ctx=canvas.getContext('2d');
     var ctx_hide=canvas_hide.getContext('2d');
     ctx_hide.fillStyle="transparent";
-    ctx_hide.fillRect(0,0,500,500);
+    ctx_hide.fillRect(0,0,300,300);
     var l=$('#canvas').position().left;
     var t=$('#canvas').position().top;
     var win=
     [
-    {x:100,y:100},
-    {x:250,y:100},
-    {x:400,y:100},
-    {x:250,y:250},
-    {x:100,y:400},
-    {x:250,y:400},
-    {x:400,y:400}
+    {x:60,y:60},
+    {x:150,y:60},
+    {x:240,y:60},
+    {x:150,y:150},
+    {x:60,y:240},
+    {x:150,y:240},
+    {x:240,y:240}
     ];
 
     function addEvent(obj,event,fn){
@@ -70,15 +71,15 @@
     function init(){
         for(var i=0;i<=2;i++){
             for(var j=0;j<=2;j++){
-                arr.push([100+(150*j),100+(150*i)]);
+                arr.push([60+(90*j),60+(90*i)]);
                 ctx.beginPath();
-                ctx.arc(100+(150*i),100+(150*j),50,0,2*Math.PI);
+                ctx.arc(60+(90*i),60+(90*j),30,0,2*Math.PI);
                 ctx.lineWidth=5;
                 ctx.strokeStyle="#fff";
                 ctx.stroke();
                 ctx.closePath();
                 ctx.beginPath();
-                ctx.arc(100+(150*i),100+(150*j),20,0,2*Math.PI);
+                ctx.arc(60+(90*i),60+(90*j),12,0,2*Math.PI);
                 ctx.fillStyle="transparent";
                 ctx.fill();
                 ctx.closePath();
@@ -91,10 +92,10 @@
     function check(json){
         for(var i=0;i<arr.length;i++){
             var len=Math.sqrt(Math.pow(Math.abs(arr[i][0]-json.x),2)+Math.pow(Math.abs(arr[i][1]-json.y),2));
-            if(len<50 && temp.indexOf(i)==-1){
+            if(len<30 && temp.indexOf(i)==-1){
                 temp.push(i);
                 ctx.beginPath();
-                ctx.arc(arr[i][0],arr[i][1],20,0,2*Math.PI);
+                ctx.arc(arr[i][0],arr[i][1],12,0,2*Math.PI);
                 ctx.fillStyle="#fff";
                 ctx.fill();
                 ctx.closePath();
@@ -133,7 +134,7 @@
             y:dis_y
         });
 
-        ctx_hide.clearRect(0,0,500,500);
+        ctx_hide.clearRect(0,0,300,300);
 
         if(obj){
            var res={
@@ -148,7 +149,7 @@
             var yy=save[save.length-1].y;
             ctx_hide.beginPath();
             ctx_hide.strokeStyle="#fff";
-            ctx_hide.lineWidth=5;
+            ctx_hide.lineWidth=3;
             ctx_hide.moveTo(xx,yy);
             ctx_hide.lineTo(dis_x,dis_y);
             ctx_hide.stroke();
@@ -180,7 +181,7 @@
                 save.push(res);
             }
             
-            ctx_hide.clearRect(0,0,500,500);
+            ctx_hide.clearRect(0,0,300,300);
 
 
             if(save.length>1){    
@@ -193,7 +194,7 @@
                 var yy=save[save.length-1].y;
                 ctx_hide.beginPath();
                 ctx_hide.strokeStyle="#fff";
-                ctx_hide.lineWidth=5;
+                ctx_hide.lineWidth=3;
                 ctx_hide.moveTo(xx,yy);
                 ctx_hide.lineTo(dis_x,dis_y);
                 ctx_hide.stroke();
@@ -206,7 +207,7 @@
             this.onmouseup=null;
             var flag=true;
 
-            ctx_hide.clearRect(0,0,500,500);
+            ctx_hide.clearRect(0,0,300,300);
 
             
 
@@ -236,8 +237,8 @@
             }
 
 
-            ctx.clearRect(0,0,500,500);
-            ctx_hide.clearRect(0,0,500,500);
+            ctx.clearRect(0,0,300,300);
+            ctx_hide.clearRect(0,0,300,300);
             save=[];
             temp=[];
             arr=[];
