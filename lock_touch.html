@@ -118,6 +118,15 @@
          }
     }
 
+    function end(){
+        ctx.clearRect(0,0,300,300);
+        ctx_hide.clearRect(0,0,300,300);
+        save=[];
+        temp=[];
+        arr=[];
+        init();
+    }
+
 
 
     addEvent(canvas_hide,'touchstart',function(ent){
@@ -221,28 +230,33 @@
 
                 if(flag){
                     line('green');
-                    alert('解锁成功!!!你很聪明，像我');
+                    setTimeout(function(){
+                        alert('解锁成功!!!你很聪明，像我');
+                        end();
+                    },300);
+                    
 
                     
                 }else{
                     line('red');
-                    alert('解锁不成功!!!');
-                    
+                    setTimeout(function(){
+                        alert('解锁不成功!!!');
+                        end();
+                    },300);
+
                 }
 
             }else{
                 line('red');
-                alert('解锁不成功!!!');
+                setTimeout(function(){
+                        alert('解锁不成功!!!');
+                        end();
+                },300);
                 
             }
 
 
-            ctx.clearRect(0,0,300,300);
-            ctx_hide.clearRect(0,0,300,300);
-            save=[];
-            temp=[];
-            arr=[];
-            init();
+            
         });
 
     </script>
